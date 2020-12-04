@@ -1,10 +1,11 @@
 const mysql = require('mysql');
 const util = require('util');
+const { edit } = require('../controllers/tableController');
 
 const pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
-    password: 'zxcvb12345!@#$%',
+    password: 'zxcvb12345',
     database: 'product_list',
     connectionLimit: 50
 });
@@ -32,5 +33,15 @@ module.exports = {
         //         connection.end();
         //     }
         // )
+    },
+
+    edit(sql, entity, condition) {
+        return pool_query(sql, [entity, condition]);
+    },
+    delete(sql, condition) {
+        return pool_query(sql, condition);
+    },
+    add(sql, entity) {
+        return pool_query(sql, entity);
     }
 };

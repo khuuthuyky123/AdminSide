@@ -4,9 +4,24 @@ module.exports.list = {
     all() {
         const sql = "SELECT * FROM product";
         return db.load(sql);
+    },
+    edit(entity) {
+        const sql = "UPDATE product SET ? WHERE ? ";
+        const condition = { id: entity.id };
+        return db.edit(sql, entity, condition);
+    },
+
+    delete(entity) {
+        const sql = "DELETE FROM product WHERE ? ";
+        const condition = { id: entity.id };
+        return db.delete(sql, condition);
+    },
+
+    add(entity) {
+        sql = "INSERT INTO product SET ?";
+        return db.add(sql, entity);
     }
 };
-
 
 
 
