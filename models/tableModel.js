@@ -2,23 +2,23 @@ const db = require('../dal/mysql');
 
 module.exports.list = {
     all() {
-        const sql = "SELECT * FROM product";
+        const sql = "SELECT * FROM Product";
         return db.load(sql);
     },
     edit(entity) {
-        const sql = "UPDATE product SET ? WHERE ? ";
+        const sql = "UPDATE Product SET ? WHERE ? ";
         const condition = { id: entity.id };
         return db.edit(sql, entity, condition);
     },
 
     delete(entity) {
-        const sql = "DELETE FROM product WHERE ? ";
+        const sql = "DELETE FROM Product WHERE ? ";
         const condition = { id: entity.id };
         return db.delete(sql, condition);
     },
 
     add(entity) {
-        sql = "INSERT INTO product SET ?";
+        sql = "INSERT INTO Product SET ?";
         return db.add(sql, entity);
     }
 };

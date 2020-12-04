@@ -1,7 +1,5 @@
 const mysql = require('mysql');
 const util = require('util');
-const { edit } = require('../controllers/tableController');
-
 const pool = mysql.createPool({
     host: 'sql12.freemysqlhosting.net',
     user: 'sql12380248',
