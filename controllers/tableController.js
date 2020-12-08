@@ -64,19 +64,19 @@ exports.add = async function(req, res, next) {
     }
 }
 
-// exports.search = async function(req, res, next) {
-//     try {
+exports.search = async function(req, res, next) {
+    try {
 
-//         const list_product = await tableModel.list.search(req.body);
-//         const n = list_product.length;
-//         var count = [];
-//         for (var i = 1; i <= Math.ceil(n / req.body.itemsPerPage); i++) {
-//             count.push({ ord: i });
-//         }
-//         //console.log(list_product);
-//         res.render('tables', { list_product, count });
-//     } catch (err) {
-//         console.log(err);
-//         res.send('Check error on server \'s console ');
-//     }
-// }
+        const list_product = await tableModel.list.search(req.body);
+        const n = list_product.length;
+        var count = [];
+        for (var i = 1; i <= Math.ceil(n / req.body.itemsPerPage); i++) {
+            count.push({ ord: i });
+        }
+        //console.log(list_product);
+        res.render('tables', { list_product, count });
+    } catch (err) {
+        console.log(err);
+        res.send('Check error on server \'s console ');
+    }
+}

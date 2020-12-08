@@ -12,6 +12,6 @@ router.post('/delete', tableController.delete);
 
 router.post('/add', tableController.add);
 
-// router.post('/search', tableController.search);
+router.post('/search', tableController.search);
 
 module.exports = router;

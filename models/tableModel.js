@@ -30,10 +30,10 @@ module.exports.list = {
         const sql = "SELECT COUNT(*) as amount FROM Product";
         return db.load(sql);
     },
-    // search(entity) {
-    //     const sql = "SELECT * FROM Product WHERE name LIKE '%" + entity.keyWords + "%' OR description LIKE '%" + entity.keyWords + "%'";
-    //     return db.load(sql);
-    // }
+    search(entity) {
+        const sql = "SELECT * FROM Product WHERE name LIKE '%" + entity.keyWords + "%' OR description LIKE '%" + entity.keyWords + "%'";
+        return db.load(sql);
+    }
 };
 
 
