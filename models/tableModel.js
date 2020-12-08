@@ -39,7 +39,7 @@ module.exports.list = {
         return db.load(sql);
     },
     filter(entity) {
-        const sql = "SELECT p.* FROM category as c JOIN product as p ON c.id=p.categoryId WHERE c.name LIKE '" + entity.keyWords + "'";
+        const sql = "SELECT p.* FROM Category as c JOIN Product as p ON c.id=p.categoryId WHERE c.name LIKE '" + entity.keyWords + "'";
         return db.load(sql);
     }
 };
