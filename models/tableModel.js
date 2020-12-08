@@ -5,6 +5,11 @@ module.exports.list = {
         const sql = "SELECT * FROM Product";
         return db.load(sql);
     },
+    get({ offset, itemsPerPage }) {
+        const sql = "SELECT * FROM Product LIMIT " + offset + "," + itemsPerPage;
+        return db.load(sql);
+
+    },
     edit(entity) {
         const sql = "UPDATE Product SET ? WHERE ? ";
         const condition = { id: entity.id };
@@ -18,9 +23,17 @@ module.exports.list = {
     },
 
     add(entity) {
-        sql = "INSERT INTO Product SET ?";
+        const sql = "INSERT INTO Product SET ?";
         return db.add(sql, entity);
-    }
+    },
+    getAmount() {
+        const sql = "SELECT COUNT(*) as amount FROM Product";
+        return db.load(sql);
+    },
+    // search(entity) {
+    //     const sql = "SELECT * FROM Product WHERE name LIKE '%" + entity.keyWords + "%' OR description LIKE '%" + entity.keyWords + "%'";
+    //     return db.load(sql);
+    // }
 };
 
 
