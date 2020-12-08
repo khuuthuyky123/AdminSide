@@ -28,7 +28,8 @@
                                     <div class="col-sm-6">
                                         <div style="text-align: right;">
                                             <label name="search-bar" style="font-weight: normal;">Search:
-                                                <input id="search-bar" style="display: inline-block; width: auto; margin-left: 0.5em;"
+                                                <input id="search-bar"
+                                                    style="display: inline-block; width: auto; margin-left: 0.5em;"
                                                     type="search" class="form-control input-sm" placeholder="">
                                             </label>
                                         </div>
@@ -47,15 +48,14 @@
                                     </div>
                                     <div class="col-sm-6">
                                         <div style="text-align: right;">
-                                            <label for="filter" style="font-weight: normal;">Show
+                                            <label for="filter" style="font-weight: normal;">Categories
                                                 <select class="form-control input-sm" id="filter"
-                                                    style="width:75px; display:inline-block;">
-                                                    <option>1</option>
-                                                    <option>2</option>
-                                                    <option>3</option>
-                                                    <option>4</option>
-                                                    <option>5</option>
-                                                </select> entries</label>
+                                                    style="width:200px; display:inline-block;">
+                                                    <option>All</option>
+                                                    {{#each categories}}
+                                                    <option>{{name}}</option>
+                                                    {{/each}}
+                                                </select></label>
                                         </div>
                                     </div>
                                 </div>
@@ -65,10 +65,13 @@
                                     <tr>
                                         <th class="col-sm-1">ID</th>
                                         <th class="col-sm-2">Name</th>
+                                        <th class="col-sm-0.5">Price</th>
+                                        <th class="col-sm-0.5">Image</th>
+                                        <th class="col-sm-0.5">Availability</th>
                                         {{!-- <th>Quantity</th> --}}
-                                        <th class="col-sm-8">Description</th>
+                                        <th class="col-sm-7">Description</th>
                                         {{!-- <th>Specification</th> --}}
-                                        <th class="col-sm-1">Action</th>
+                                        <th class="col-sm-0.5">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -76,6 +79,9 @@
                                     <tr class={{id}}>
                                         <td class="product_id">{{id}}</td>
                                         <td class="product_name">{{name}}</td>
+                                        <td class="product_price">{{price}}</td>
+                                        <th class="product_image">{{imagePath}}</th>
+                                        <th class="product_avai">{{availability}}</th>
                                         {{!-- <td>quantity</td> --}}
                                         <td class="center product_description">{{description}}</td>
                                         {{!-- <td class="center">specification</td>  --}}
@@ -89,12 +95,15 @@
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <th>ID</th>
-                                        <th>Name</th>
+                                        <th class="col-sm-1">ID</th>
+                                        <th class="col-sm-2">Name</th>
+                                        <th class="col-sm-0.5">Price</th>
+                                        <th class="col-sm-0.5">Image</th>
+                                        <th class="col-sm-0.5">Availability</th>
                                         {{!-- <th>Quantity</th> --}}
-                                        <th>Description</th>
+                                        <th class="col-sm-7">Description</th>
                                         {{!-- <th>Specification</th> --}}
-                                        <th>Action</th>
+                                        <th class="col-sm-0.5">Action</th>
                                     </tr>
                                 </tfoot>
 
@@ -108,7 +117,7 @@
                                         </a>
                                     </li>
                                     {{#each count}}
-                                    <li class="page-item"><a class="page-link" id="{{ord}}" >{{ord}}</a></li>
+                                    <li class="page-item"><a class="page-link" id="{{ord}}">{{ord}}</a></li>
                                     {{/each}}
                                     <li class="page-item">
                                         <a class="page-link" aria-label="Next">
@@ -236,16 +245,7 @@
 <script src="../js/startmin.js"></script>
 
 <!-- Page-Level Demo Scripts - Tables - Use for reference -->
-{{!-- <script>
-    $(document).ready(function () {
-        $('#dataTables-example').DataTable({
-            responsive: true
-        });
-        itemsPerPage = +$('#dataTables-example_length select').val();
-        $('#itemsPerPage').val(itemsPerPage);
-        $.post('tables/page/1', { offset: 1, itemsPerPage });
-    });
-</script> --}}
+
 <script>
     $('#exampleModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget) // Button that triggered the modal
@@ -259,7 +259,7 @@
         modal.find('.modal-body #name').val(product_name)
         modal.find('.modal-body #id').val(product_id)
         modal.find('.modal-body #description').val(product_description)
-    })
+    });
 </script>
 <script>
     $('#addModal').on('show.bs.modal', function (event) {
@@ -271,7 +271,7 @@
         modal.find('.modal-title').text('New Product')
         const product_name = modal.find('.modal-body #name').val()
         const product_description = modal.find('.modal-body #description').val()
-    })
+    });
 </script>
 <script>
     $('#confirm-delete').on('show.bs.modal', function (e) {
@@ -287,35 +287,46 @@
 <script>
     $('.page-item .page-link').click(function () {
         const keyWords = $('#search-bar').val();
-        if (keyWords===undefined)
-        {
-        const pagniation = Number(this.id);
-        const itemsPerPage = +$('#itemsPerPage').val();
-        const offset = itemsPerPage*(pagniation-1);
-        $.post('tables/page/', { offset,itemsPerPage }, function (res) {
-            $('#wrapper').html(res);
-            $('#search-bar').val(keyWords);
-        });
+        const keyWords_filter = $('#filter').val();
+        if (keyWords == "" || keyWords_filter!="All") {
+            const tag_a = this;
+            const pagniation = Number(tag_a.id);
+            const itemsPerPage = +$('#itemsPerPage').val();
+            const offset = itemsPerPage * (pagniation - 1);
+            $.post('tables/page/', { offset, itemsPerPage }, function (res) {
+                $('#wrapper').html(res);
+                $('#search-bar').val(keyWords);
+                $('#' + tag_a.id).css('background', 'beige');
+            });
         }
-        
     });
 </script>
 <script>
-    $('#search-bar').on('input',function () {
+    $('#search-bar').on('input', function () {
         const keyWords = $('#search-bar').val();
         const itemsPerPage = +$('#itemsPerPage').val();
-        $.post('tables/search/', {itemsPerPage,keyWords }, function (res) {
+        $.post('tables/search/', { itemsPerPage, keyWords }, function (res) {
             $('#wrapper').html(res);
             $('#search-bar').val(keyWords);
             $('#search-bar').focus();
         });
-        {{!-- $('.page-item .page-link').click(function () {
-        const pagniation = Number(this.id);
+
+    });
+</script>
+<script>
+    $('#filter').on('change', function () {
+        const keyWords = $('#filter').val();
         const itemsPerPage = +$('#itemsPerPage').val();
-        const offset = itemsPerPage*(pagniation-1);
-        $.post('tables/page/', { offset,itemsPerPage }, function (res) {
-            $('#wrapper').html(res);
-            $('#search-bar').val(keyWords);
-        }); --}}
+        if (keyWords != "All") {
+            $.post('tables/filter/', { itemsPerPage, keyWords }, function (res) {
+                $('#wrapper').html(res);
+                $('#filter').val(keyWords);
+            });
+        }
+        else {
+            $.get('tables/', function (res) {
+                $('#wrapper').html(res);
+            });
+        }
     });
 </script>

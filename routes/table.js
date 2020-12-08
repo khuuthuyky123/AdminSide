@@ -14,4 +14,6 @@ router.post('/add', tableController.add);
 
 router.post('/search', tableController.search);
 
+router.post('/filter', tableController.filter);
+
 module.exports = router;

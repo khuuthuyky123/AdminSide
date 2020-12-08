@@ -5,11 +5,14 @@ exports.index = async function(req, res, next) {
     try {
         var pagination = { offset: 0, itemsPerPage: 0 };
         //console.log(req.body)
-        if (req.body.constructor === Object && Object.keys(req.body).length === 0)
+        if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
+            first_page = 1;
             pagination = { offset: 0, itemsPerPage: 10 };
-        else
+        } else {
             pagination = req.body
-            //const list_product = await tableModel.list.all();
+        }
+        const categories = await tableModel.list.getCategories();
+        //const list_product = await tableModel.list.all();
 
         //pass data to view display 
         const list_product = await tableModel.list.get(pagination);
@@ -19,7 +22,7 @@ exports.index = async function(req, res, next) {
             count.push({ ord: i });
         }
         //console.log(list_product);
-        res.render('tables', { list_product, count });
+        res.render('tables', { list_product, count, categories });
     } catch (err) {
         console.log(err);
         res.send('Check error on server \'s console ');
@@ -75,6 +78,24 @@ exports.search = async function(req, res, next) {
         }
         //console.log(list_product);
         res.render('tables', { list_product, count });
+    } catch (err) {
+        console.log(err);
+        res.send('Check error on server \'s console ');
+    }
+}
+exports.filter = async function(req, res, next) {
+    try {
+
+        const list_product = await tableModel.list.filter(req.body);
+        const n = list_product.length;
+        var count = [];
+        for (var i = 1; i <= Math.ceil(n / req.body.itemsPerPage); i++) {
+            count.push({ ord: i });
+        }
+        //console.log(list_product);
+
+        const categories = await tableModel.list.getCategories();
+        res.render('tables', { list_product, count, categories });
     } catch (err) {
         console.log(err);
         res.send('Check error on server \'s console ');

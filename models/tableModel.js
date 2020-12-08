@@ -33,6 +33,14 @@ module.exports.list = {
     search(entity) {
         const sql = "SELECT * FROM Product WHERE name LIKE '%" + entity.keyWords + "%' OR description LIKE '%" + entity.keyWords + "%'";
         return db.load(sql);
+    },
+    getCategories() {
+        const sql = "SELECT * FROM Category"
+        return db.load(sql);
+    },
+    filter(entity) {
+        const sql = "SELECT p.* FROM category as c JOIN product as p ON c.id=p.categoryId WHERE c.name LIKE '" + entity.keyWords + "'";
+        return db.load(sql);
     }
 };
 
