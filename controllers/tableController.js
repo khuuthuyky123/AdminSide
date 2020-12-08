@@ -33,27 +33,27 @@ exports.index = async function(req, res, next) {
 };
 
 exports.edit = async function(req, res, next) {
-    try {
-        //console.log(product_name);
-        const form = formidable({ multiples: false });
-        form.parse(req, async function(err, fields, files) {
+    //console.log(product_name);
+    const form = formidable({ multiples: false });
+    form.parse(req, async function(err, fields, files) {
+        try {
             if (err) {
                 next(err);
                 return;
             }
             //console.log({ fields, files });
             req.body = fields;
-            const newPath = __dirname + '\\..\\public\\images\\' + files.imagePath.name;
-            fs.renameSync(files.imagePath.path, newPath)
+            const newPath = __dirname + "/../public/images/" + files.newImagePath.name;
+            fs.renameSync(files.newImagePath.path, newPath);
             req.body.imagePath = newPath;
             const ret = await tableModel.list.edit(req.body);
             //console.log(ret);
             res.redirect("/tables");
-        });
-    } catch (err) {
-        console.log(err);
-        res.send("Check error on server 's console ");
-    }
+        } catch (err) {
+            console.log(err);
+            res.send("Check error on server 's console ");
+        }
+    });
 };
 
 exports.delete = async function(req, res, next) {
@@ -69,15 +69,27 @@ exports.delete = async function(req, res, next) {
 };
 
 exports.add = async function(req, res, next) {
-    try {
-        //console.log(product_name);
-        const ret = await tableModel.list.add(req.body);
-        console.log(ret);
-        res.redirect("../tables");
-    } catch (err) {
-        console.log(err);
-        res.send("Check error on server 's console ");
-    }
+    const form = formidable({ multiples: false });
+    form.parse(req, async function(err, fields, files) {
+        try {
+            if (err) {
+                next(err);
+                return;
+            }
+            //console.log({ fields, files });
+            req.body = fields;
+            const newPath = __dirname + "/../public/images/" + files.imagePath.name;
+            fs.renameSync(files.imagePath.path, newPath);
+            req.body.imagePath = newPath;
+
+            const ret = await tableModel.list.add(req.body);
+            //console.log(ret);
+            res.redirect("../tables");
+        } catch (err) {
+            console.log(err);
+            res.send("Check error on server 's console ");
+        }
+    });
 };
 
 exports.search = async function(req, res, next) {

@@ -154,7 +154,7 @@
                 <h4 class="modal-title" id="addModalLabel">New message</h4>
             </div>
             <div class="modal-body">
-                <form method="POST" action="tables/add">
+                <form method="POST" action="tables/add"  enctype="multipart/form-data" >
 
                     <div class="form-group">
                         <label for="name" class="control-label">Name:</label>
@@ -207,11 +207,11 @@
                         <input type="text" class="form-control" name="name" id="name">
                     </div>
                     <div class="form-group">
-                        <label for="imagePath" class="control-label">Old image:</label>
-                        <input type="text" class="form-control" id="imagePath" disabled>
+                        <label for="imagePath" class="control-label">Image:</label>
+                        <input type="text" class="form-control" name="imagePath" id="imagePath" disabled>
                     </div>
                     <div class="form-group">
-                        <b>New image: </b><input type="file" class="form-control" name="imagePath">
+                        <b>New image: </b><input type="file" class="form-control" name="newImagePath" id="newImagePath">
                     </div>
                     <div class="form-group">
                         <label for="price" class="control-label">Price:</label>
@@ -283,7 +283,7 @@
         var product_description = $('.' + product_id + ' .product_description')[0].innerText;
         var product_price = $('.' + product_id + ' .product_price')[0].innerText;
         var product_avai = $('.' + product_id + ' .product_avai')[0].innerText;
-        var product_image = $('.' + product_id + ' .product_image')[0].innerText;
+        var product_image = $('.' + product_id + ' .product_image img')[0].src;
         var modal = $(this)
         modal.find('.modal-title').text('Edit to ' + product_name)
         modal.find('.modal-body #name').val(product_name)
@@ -292,6 +292,10 @@
         modal.find('.modal-body #price').val(product_price)
         modal.find('.modal-body #availability').val(product_avai)
         modal.find('.modal-body #imagePath').val(product_image)
+    });
+    $('#newImagePath').on('input',function() {
+        const path = $('#newImagePath').val();
+        $('#imagePath').val(path);
     });
 </script>
 <script>
