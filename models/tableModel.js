@@ -17,9 +17,12 @@ module.exports.list = {
     },
 
     delete(entity) {
-        const sql = "DELETE FROM Product WHERE ? ";
-        const condition = { id: entity.id };
-        return db.delete(sql, condition);
+        const sql1 = "DELETE FROM Specification WHERE ?";
+        const sql2 = "DELETE FROM Product WHERE ?";
+        const condition1 = { productID: entity.id };
+        const condition2 = { id: entity.id };
+        db.delete(sql1, condition1);
+        return db.delete(sql2, condition2);
     },
 
     add(entity) {
