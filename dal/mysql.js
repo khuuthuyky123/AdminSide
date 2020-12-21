@@ -1,21 +1,21 @@
 const mysql = require('mysql');
 const util = require('util');
-const pool = mysql.createPool({
-    host: 'sql12.freemysqlhosting.net',
-    user: 'sql12380248',
-    password: 'DzQxPaZiPG',
-    database: 'sql12380248',
-    port: 3306,
-    connectionLimit: 50
-});
-
 // const pool = mysql.createPool({
-//     host: 'localhost',
-//     user: 'root',
-//     password: 'zxcvb12345',
-//     database: 'product_list',
+//     host: 'sql12.freemysqlhosting.net',
+//     user: 'sql12380248',
+//     password: 'DzQxPaZiPG',
+//     database: 'sql12380248',
+//     port: 3306,
 //     connectionLimit: 50
 // });
+
+const pool = mysql.createPool({
+    host: 'localhost',
+    user: 'root',
+    password: 'zxcvb12345',
+    database: 'product_list',
+    connectionLimit: 50
+});
 
 const pool_query = util.promisify(pool.query).bind(pool);
 
