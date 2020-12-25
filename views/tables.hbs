@@ -67,6 +67,7 @@
                                             <th class="col-sm-2">Name</th>
                                             <th class="col-sm-0.5">Price</th>
                                             <th class="col-sm-0.5">Image</th>
+                                            <th hidden>Category</th>
                                             <th class="col-sm-0.5">Availability</th>
                                             {{!-- <th>Quantity</th> --}}
                                             <th class="col-sm-7">Description</th>
@@ -82,6 +83,7 @@
                                             <td class="product_price">{{price}}</td>
                                             <th class="product_image"><img style="width:100px; height:100px"
                                                     src="{{imagePath}}"></th>
+                                            <td class="product_category" hidden>{{categoryId}}-{{category}}</td>
                                             <th class="product_avai">{{availability}}</th>
                                             {{!-- <td>quantity</td> --}}
                                             <td class="center product_description">{{description}}</td>
@@ -100,6 +102,7 @@
                                             <th class="col-sm-2">Name</th>
                                             <th class="col-sm-0.5">Price</th>
                                             <th class="col-sm-0.5">Image</th>
+                                            <th hidden>Category</th>
                                             <th class="col-sm-0.5">Availability</th>
                                             {{!-- <th>Quantity</th> --}}
                                             <th class="col-sm-7">Description</th>
@@ -118,7 +121,8 @@
                                             </a>
                                         </li>
                                         {{#each count}}
-                                        <li class="page-item"><a class="page-link" id="{{ord}}">{{ord}}</a></li>
+                                        <li class="page-item"><a class="page-link" id="{{ord}}" {{#if
+                                                isfirst}}style="background: beige;" {{/if}}>{{ord}}</a></li>
                                         {{/each}}
                                         <li class="page-item">
                                             <a class="page-link" aria-label="Next">
@@ -156,27 +160,38 @@
                 <h4 class="modal-title" id="addModalLabel">New message</h4>
             </div>
             <div class="modal-body">
-                <form method="POST" action="tables/add" enctype="multipart/form-data">
+                <form method="POST" action="../tables/add/?page=0&limit=10" enctype="multipart/form-data">
 
                     <div class="form-group">
                         <label for="name" class="control-label">Name:</label>
-                        <input type="text" class="form-control" name="name" id="newName">
+                        <input type="text" class="form-control" name="name" id="newName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newCategory" style="font-weight: normal;">Categories
+                            <select class="form-control input-sm" id="newCategory" name="categoryId">
+
+                                {{#each categories}}
+                                <option value="{{id}}">{{name}}</option>
+                                {{/each}}
+                            </select>
+                        </label>
                     </div>
                     <div class="form-group">
                         <label for="newImage" class="control-label">Image:</label>
-                        <input type="file" class="form-control" name="imagePath" id="newImage">
+                        <input type="file" class="form-control" name="imagePath" id="newImage" required>
                     </div>
+
                     <div class="form-group">
                         <label for="newPrice" class="control-label">Price:</label>
-                        <input type="number" class="form-control" name="price" id="newPrice">
+                        <input type="number" class="form-control" name="price" id="newPrice" required>
                     </div>
                     <div class="form-group">
                         <label for="newAvailability" class="control-label">Availability:</label>
-                        <input type="number" class="form-control" name="availability" id="newAvailability">
+                        <input type="number" class="form-control" name="availability" id="newAvailability" required>
                     </div>
                     <div class="form-group">
                         <label for="description" class="control-label">Description:</label>
-                        <textarea class="form-control" resize="none" name="description" id="newDescription"
+                        <textarea class="form-control" resize="none" name="description" id="newDescription" required
                             style="resize:vertical"></textarea>
                     </div>
                     <div class="modal-footer">
@@ -199,7 +214,7 @@
                 <h4 class="modal-title" id="exampleModalLabel">New message</h4>
             </div>
             <div class="modal-body">
-                <form method="POST" action="/tables/edit" enctype="multipart/form-data">
+                <form method="POST" action="../tables/edit/?page=0&limit=10" enctype="multipart/form-data">
                     <div class="form-group" hidden>
                         <label for="id" class="control-label"></label>
                         <input type="text" class="form-control" name="id" id="id">
@@ -207,6 +222,16 @@
                     <div class="form-group">
                         <label for="name" class="control-label">Name:</label>
                         <input type="text" class="form-control" name="name" id="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="category" style="font-weight: normal;">Categories
+                            <select class="form-control input-sm" id="category" name="categoryId">
+
+                                {{#each categories}}
+                                <option value="{{id}}">{{name}}</option>
+                                {{/each}}
+                            </select>
+                        </label>
                     </div>
                     <div class="form-group">
                         <label for="imagePath" class="control-label">Image:</label>
@@ -265,10 +290,10 @@
 
 <!-- Metis Menu Plugin JavaScript -->
 <script src="../js/metisMenu.min.js"></script>
-
+{{!--
 <!-- DataTables JavaScript -->
 <script src="../js/dataTables/jquery.dataTables.min.js"></script>
-<script src="../js/dataTables/dataTables.bootstrap.min.js"></script>
+<script src="../js/dataTables/dataTables.bootstrap.min.js"></script> --}}
 
 <!-- Custom Theme JavaScript -->
 <script src="../js/startmin.js"></script>
@@ -276,6 +301,7 @@
 <!-- Page-Level Demo Scripts - Tables - Use for reference -->
 
 <script>
+    //window.addEventListener('load', onloadpage);
     $('#exampleModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget) // Button that triggered the modal
         var product_id = button.data('whatever') // Extract info from data-* attributes
@@ -286,6 +312,8 @@
         var product_price = $('.' + product_id + ' .product_price')[0].innerText;
         var product_avai = $('.' + product_id + ' .product_avai')[0].innerText;
         var product_image = $('.' + product_id + ' .product_image img')[0].src;
+        var product_category = $('.' + product_id + ' .product_category')[0].innerText;
+        var category = product_category.split("-");
         var modal = $(this)
         modal.find('.modal-title').text('Edit to ' + product_name)
         modal.find('.modal-body #name').val(product_name)
@@ -294,6 +322,8 @@
         modal.find('.modal-body #price').val(product_price)
         modal.find('.modal-body #availability').val(product_avai)
         modal.find('.modal-body #imagePath').val(product_image)
+        //console.log(category[1])
+        modal.find('.modal-body #categoryId').val(category[0])
     });
 </script>
 <script>
@@ -313,7 +343,7 @@
         const id = $('#exampleModal').find('#id').val();
         //$(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href')+'/'+id);
         $(this).find('.btn-ok').click(function () {
-            $.post('tables/delete/', { id }, function (result) {
+            $.post('../tables/delete/', { id }, function (result) {
                 $(location).attr('href', result);
             })
         })
@@ -321,19 +351,48 @@
 </script>
 <script>
     $('.page-item .page-link').click(function () {
-        const keyWords = $('#search-bar').val();
-        const keyWords_filter = $('#filter').val();
-        if (keyWords == "" || keyWords_filter != "All") {
-            const tag_a = this;
-            const pagniation = Number(tag_a.id);
-            const itemsPerPage = +$('#itemsPerPage').val();
-            const offset = itemsPerPage * (pagniation - 1);
-            $.post('tables/page/', { offset, itemsPerPage }, function (res) {
-                $('#wrapper').html(res);
-                $('#search-bar').val(keyWords);
-                $('#' + tag_a.id).css('background', 'beige');
-            });
+        const searchKeyWords = $('#search-bar').val();
+        const filterKeyWords = $('#filter').val();
+        const tag_a = $(this);
+        //console.log(tag_a[0].id);
+        const page = Number(tag_a[0].id) - 1;
+        const limit = +$('#itemsPerPage').val();
+        if (filterKeyWords == "All" && searchKeyWords == "") {
+
+            //const offset = itemsPerPage * (pagniation - 1)
+            window.location.replace('?page=' + page + '&limit=' + limit);
+            //$('#' + tag_a.id).css('background', 'beige');
+
         }
+        else
+            if (filterKeyWords == "All" && searchKeyWords != "") {
+                window.history.pushState("search", "Search", "/tables/?page=" + page + "&limit=" + limit);
+                $.post('../tables/search/?page=' + page + '?limit=' + limit, { searchKeyWords, filterKeyWords: "" }, function (res) {
+                    $('#wrapper').html(res);
+                    $('#search-bar').val(searchKeyWords);
+                    $('#filter').val(filterKeyWords);
+                });
+            }
+            else {
+                if (filterKeyWords != "All" && searchKeyWords != "") {
+                    window.history.pushState("search", "Search", "/tables/?page=" + page + "&limit=" + limit);
+
+                    $.post('../tables/search/?page=' + page + '?limit=' + limit, { searchKeyWords, filterKeyWords }, function (res) {
+                        $('#wrapper').html(res);
+                        $('#search-bar').val(searchKeyWords);
+                        $('#filter').val(filterKeyWords);
+                    });
+                }
+                else {
+                    window.history.pushState("search", "Search", "/tables/?page=" + page + "&limit=" + limit);
+                    $.post('../tables/search/?page=' + page + '?limit=' + limit, { searchKeyWords: "", filterKeyWords }, function (res) {
+                        $('#wrapper').html(res);
+                        $('#search-bar').val(searchKeyWords);
+                        $('#filter').val(filterKeyWords);
+                        $('#search-bar').focus();
+                    });
+                }
+            }
     });
 </script>
 <script>
@@ -347,15 +406,31 @@
             }, ms || 0);
         };
     }
-    $('#search-bar').on('input', delay(200, function () {
-        const keyWords = $('#search-bar').val();
+    $('#search-bar').on('input', delay(350, function () {
+        const searchKeyWords = $('#search-bar').val();
         const itemsPerPage = +$('#itemsPerPage').val();
-        $.post('tables/search/', { itemsPerPage, keyWords }, function (res) {
-            $('#wrapper').html(res);
-            $('#search-bar').val(keyWords);
-            $('#search-bar').focus();
-        });
-
+        const filterKeyWords = $('#filter').val();
+        $('#search-bar')[0].disabled = true
+        if (filterKeyWords != "All") {
+            $.post('../tables/search', { itemsPerPage, searchKeyWords, filterKeyWords }, function (res) {
+                $('#wrapper').html(res)
+                $('#search-bar').val(searchKeyWords);
+                $('#filter').val(filterKeyWords);
+                $('#itemsPerPage').val(itemsPerPage);
+                $('#search-bar').focus();
+            });
+        }
+        else {
+            $.post('../tables/search', { itemsPerPage, searchKeyWords, filterKeyWords: "" }, function (res) {
+                $('#wrapper').html(res);
+                $('#search-bar').val(searchKeyWords);
+                $('#filter').val(filterKeyWords);
+                $('#itemsPerPage').val(itemsPerPage);
+                $('#search-bar').focus();
+            });
+        }
+        window.history.pushState("search", "Search", "/tables/?page=0&limit=" + itemsPerPage);
+        
     }));
 </script>
 <script>
@@ -363,17 +438,36 @@
         const keyWords = $('#filter').val();
         const itemsPerPage = +$('#itemsPerPage').val();
         if (keyWords != "All") {
-            $.post('tables/filter/', { itemsPerPage, keyWords }, function (res) {
+            $.post('../tables/filter', { itemsPerPage, keyWords }, function (res) {
                 $('#wrapper').html(res);
-                console.log(res);
+                //console.log(res);
                 $('#filter').val(keyWords);
+                $('#itemsPerPage').val(itemsPerPage);
+                window.history.pushState("filter", "Filter", "/tables/?page=0&limit=" + itemsPerPage);
             });
         }
         else {
-            $.get('tables/', function (res) {
+            $.post('../tables/filter', { itemsPerPage, keyWords:"" }, function (res) {
                 $('#wrapper').html(res);
+                //console.log(res);
+                $('#filter').val(keyWords);
+                $('#itemsPerPage').val(itemsPerPage);
+                window.history.pushState("filter", "Filter", "/tables/?page=0&limit=" + itemsPerPage);
             });
         }
+    });
+
+</script>
+<script>
+    $('#itemsPerPage').on('change', function () {
+        const limit = +$('#itemsPerPage').val();
+
+        //window.location.replace('?page=0&limit=' + limit);
+        $.get('../tables/?page=0&limit=' + limit, function (res) {
+            $('#wrapper').html(res);
+            $('#itemsPerPage').val(limit);
+            window.history.pushState("table", "Table", "/tables/?page=0&limit=" + limit);
+        });
     });
 
 </script>

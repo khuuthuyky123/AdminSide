@@ -2,17 +2,22 @@ const db = require('../dal/mysql');
 
 module.exports.list = {
     all() {
-        const sql = "SELECT * FROM Product";
+        const sql = "SELECT * FROM Product ORDER BY id ASC";
         return db.load(sql);
     },
-    get({ offset, itemsPerPage }) {
-        const sql = "SELECT * FROM Product LIMIT " + offset + "," + itemsPerPage;
+    get({ page, limit }) {
+        const sql = "SELECT p.*, c.id as categoryId, c.name as category FROM (Product as p JOIN Category as c ON (p.categoryId = c.id)) ORDER BY id ASC LIMIT " + page * limit + "," + limit;
         return db.load(sql);
 
+    },
+    getSingleProduct(id) {
+        const sql = "SELECT * FROM Product WHERE id = " + id;
+        return db.load(sql);
     },
     edit(entity) {
         const sql = "UPDATE Product SET ? WHERE ? ";
         const condition = { id: entity.id };
+        //var categoryId = db.load("SELECT id FROM Category WHERE Name LIKE '" + entity.category + "'");
         return db.edit(sql, entity, condition);
     },
 
@@ -33,8 +38,18 @@ module.exports.list = {
         const sql = "SELECT COUNT(*) as amount FROM Product";
         return db.load(sql);
     },
-    search(entity) {
-        const sql = "SELECT * FROM Product WHERE name LIKE '%" + entity.keyWords + "%' OR description LIKE '%" + entity.keyWords + "%'";
+    search(entity, { page, limit }) {
+        const sql = "SELECT p.* FROM Category as c \
+JOIN (SELECT * FROM Product WHERE name LIKE '%" + entity.searchKeyWords + "%' OR description LIKE '%" + entity.searchKeyWords + "%') as p \
+ON c.id=p.categoryId WHERE c.name LIKE '%" + entity.filterKeyWords + "%' \
+ORDER BY p.id asc \
+LIMIT " + page * limit + "," + limit;
+        return db.load(sql);
+    },
+    getSearchAmount(entity) {
+        const sql = "SELECT COUNT(*) as amount FROM Category as c \
+        JOIN (SELECT * FROM Product WHERE name LIKE '%" + entity.searchKeyWords + "%' OR description LIKE '%" + entity.searchKeyWords + "%') as p \
+        ON c.id=p.categoryId WHERE c.name LIKE '%" + entity.filterKeyWords + "%'";
         return db.load(sql);
     },
     getCategories() {
@@ -42,7 +57,7 @@ module.exports.list = {
         return db.load(sql);
     },
     filter(entity) {
-        const sql = "SELECT p.* FROM Category as c JOIN Product as p ON c.id=p.categoryId WHERE c.name LIKE '" + entity.keyWords + "'";
+        const sql = "SELECT p.* FROM Category as c JOIN Product as p ON c.id=p.categoryId WHERE c.name LIKE '%" + entity.keyWords + "%' ORDER BY id ASC";
         return db.load(sql);
     }
 };

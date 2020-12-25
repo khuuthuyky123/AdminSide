@@ -10,31 +10,36 @@ cloudinary.config({
 
 exports.index = async function(req, res, next) {
     try {
-        var pagination = { offset: 0, itemsPerPage: 0 };
-        //console.log(req.body)
-        if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
-            first_page = 1;
-            pagination = { offset: 0, itemsPerPage: 10 };
-        } else {
-            pagination = req.body;
+        const pageOptions = {
+            page: parseInt(req.query.page, 0) || 0,
+            limit: parseInt(req.query.limit, 10) || 10,
         }
+        if (req.query.constructor === Object && Object.keys(req.query).length === 0) {
+            res.redirect("/tables/?page=0&limit=10")
+        }
+        //var pagination = { offset: 0, itemsPerPage: 0 };
+        //console.log(req.body)
+        // if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
+        //     first_page = 1;
+        //     pagination = { offset: 0, itemsPerPage: 10 };
+        // } else {
+        //     pagination = req.body;
+        // }
         const categories = await tableModel.list.getCategories();
         //const list_product = await tableModel.list.all();
 
         //pass data to view display
-        const list_product = await tableModel.list.get(pagination);
+        const list_product = await tableModel.list.get(pageOptions);
         for (item of list_product) {
             //item.imagePath = cloudinary.url(item.imagePath);
             item.imagePath = cloudinary.url(item.imagePath, { width: 200, crop: "scale" })
         }
         const n = await tableModel.list.getAmount();
         var count = [];
-        for (
-            var i = 1; i <= Math.ceil(n[0].amount / pagination.itemsPerPage); i++
-        ) {
-            count.push({ ord: i });
+        for (var i = 1; i <= Math.ceil(n[0].amount / pageOptions.limit); i++) {
+            count.push({ ord: i, isfirst: (i == pageOptions.page + 1) });
         }
-        //console.log(list_product);
+        //console.log(count);
         res.render("tables", { list_product, count, categories });
     } catch (err) {
         console.log(err);
@@ -46,7 +51,7 @@ exports.edit = function(req, res, next) {
     //console.log(product_name);
     //console.log(req.query);
     const form = formidable({ multiples: false });
-    form.parse(req, function(err, fields, files) {
+    form.parse(req, async function(err, fields, files) {
         try {
             if (err) {
                 next(err);
@@ -55,16 +60,31 @@ exports.edit = function(req, res, next) {
             //console.log({ fields, files });
 
             req.body = fields;
-            var tokens = String(files.newImagePath.path).split("\\");
-            var newPath = String(files.newImagePath.path).replace(tokens[tokens.length - 1], files.newImagePath.name);
-            fs.renameSync(files.newImagePath.path, newPath);
-            cloudinary.uploader.upload(newPath, async function(error, result) {
-                console.log(result)
-                req.body.imagePath = result.public_id + "." + result.format;
+            if (files.newImagePath.size != 0) {
+                var tokens = String(files.newImagePath.path).split("\\");
+                var newPath = String(files.newImagePath.path).replace(tokens[tokens.length - 1], files.newImagePath.name);
+                fs.renameSync(files.newImagePath.path, newPath);
+                const curProduct = await tableModel.list.getSingleProduct(req.body.id);
+                const oldImage = curProduct[0].imagePath;
+                const oldImagePath = oldImage.split(".");
+                await cloudinary.uploader.destroy(oldImagePath[0], function(error, result) {
+                    console.log(result, error)
+                });
+                await cloudinary.uploader.upload(newPath, async function(error, result) {
+                    //console.log(result)
+                    if (err) {
+                        throw err;
+                    }
+                    req.body.imagePath = result.public_id + "." + result.format;
+                    const ret = await tableModel.list.edit(req.body);
+                    //console.log(ret);
+                    res.redirect("/tables");
+                });
+            } else {
                 const ret = await tableModel.list.edit(req.body);
-                console.log(ret);
+                //console.log(ret);
                 res.redirect("/tables");
-            });
+            }
             //const newPath = __dirname + "/../public/images/" + files.newImagePath.name;
             //fs.renameSync(files.newImagePath.path, newPath);
             //req.body.imagePath = "/images/" + files.newImagePath.name;
@@ -78,9 +98,15 @@ exports.edit = function(req, res, next) {
 exports.delete = async function(req, res, next) {
     try {
         //console.log(product_name);
+        const curProduct = await tableModel.list.getSingleProduct(req.body.id);
+        const oldImage = curProduct[0].imagePath;
+        const oldImagePath = oldImage.split(".");
+        await cloudinary.uploader.destroy(oldImagePath[0], function(error, result) {
+            console.log(result, error)
+        });
         const ret = await tableModel.list.delete(req.body);
         console.log(ret);
-        res.send("tables");
+        res.send("/tables");
     } catch (err) {
         console.log(err);
         res.send("Check error on server 's console ");
@@ -97,13 +123,18 @@ exports.add = async function(req, res, next) {
             }
             //console.log({ fields, files });
             req.body = fields;
-            const newPath = __dirname + "/../public/images/" + files.imagePath.name;
-            fs.renameSync(files.imagePath.path, newPath);
-            req.body.imagePath = "/images/" + files.imagePath.name;
-
-            const ret = await tableModel.list.add(req.body);
-            //console.log(ret);
-            res.redirect("../tables");
+            if (files.imagePath.size != 0) {
+                var tokens = String(files.imagePath.path).split("\\");
+                var newPath = String(files.imagePath.path).replace(tokens[tokens.length - 1], files.imagePath.name);
+                fs.renameSync(files.imagePath.path, newPath);
+                cloudinary.uploader.upload(newPath, async function(error, result) {
+                    //console.log(result)
+                    req.body.imagePath = result.public_id + "." + result.format;
+                    const ret = await tableModel.list.add(req.body);
+                    console.log(ret);
+                    res.redirect("/tables");
+                });
+            }
         } catch (err) {
             console.log(err);
             res.send("Check error on server 's console ");
@@ -113,14 +144,21 @@ exports.add = async function(req, res, next) {
 
 exports.search = async function(req, res, next) {
     try {
-        const list_product = await tableModel.list.search(req.body);
-        const n = list_product.length;
-        var count = [];
-        for (var i = 1; i <= Math.ceil(n / req.body.itemsPerPage); i++) {
-            count.push({ ord: i });
+        const pageOptions = {
+            page: 0,
+            limit: parseInt(req.body.itemsPerPage, 0) || 0
         }
-        //console.log(list_product);
-        res.render("tables", { list_product, count });
+        const categories = await tableModel.list.getCategories();
+        const list_product = await tableModel.list.search(req.body, pageOptions);
+        const n = await tableModel.list.getSearchAmount(req.body);
+        for (item of list_product) {
+            item.imagePath = cloudinary.url(item.imagePath, { width: 200, crop: "scale" })
+        }
+        var count = [];
+        for (var i = 1; i <= Math.ceil(n[0].amount / pageOptions.limit); i++) {
+            count.push({ ord: i, isfirst: (i == pageOptions.page + 1) });
+        }
+        res.render("tables", { list_product, categories, count });
     } catch (err) {
         console.log(err);
         res.send("Check error on server 's console ");
@@ -128,11 +166,18 @@ exports.search = async function(req, res, next) {
 };
 exports.filter = async function(req, res, next) {
     try {
+        const pageOptions = {
+            page: 0,
+            limit: parseInt(req.body.itemsPerPage, 0) || 0
+        }
         const list_product = await tableModel.list.filter(req.body);
+        for (item of list_product) {
+            item.imagePath = cloudinary.url(item.imagePath, { width: 200, crop: "scale" })
+        }
         const n = list_product.length;
         var count = [];
-        for (var i = 1; i <= Math.ceil(n / req.body.itemsPerPage); i++) {
-            count.push({ ord: i });
+        for (var i = 1; i <= Math.ceil(n / pageOptions.limit); i++) {
+            count.push({ ord: i, isfirst: (i == pageOptions.page + 1) });
         }
         //console.log(list_product);
 

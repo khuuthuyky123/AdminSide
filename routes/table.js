@@ -4,8 +4,6 @@ const tableController = require('../controllers/tableController');
 
 router.get('/', tableController.index);
 
-router.post('/page/', tableController.index);
-
 router.post('/edit', tableController.edit);
 
 router.post('/delete', tableController.delete);
