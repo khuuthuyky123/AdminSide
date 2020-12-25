@@ -115,7 +115,7 @@
                                 <nav aria-label="Page navigation">
                                     <ul class="pagination" style="float:right;margin-top:0;">
                                         <li class="page-item">
-                                            <a class="page-link" aria-label="Previous">
+                                            <a class="page-link" aria-label="Previous" id="previousPage">
                                                 <span aria-hidden="true">&laquo;</span>
                                                 <span class="sr-only">Previous</span>
                                             </a>
@@ -125,7 +125,7 @@
                                                 isfirst}}style="background: beige;" {{/if}}>{{ord}}</a></li>
                                         {{/each}}
                                         <li class="page-item">
-                                            <a class="page-link" aria-label="Next">
+                                            <a class="page-link" aria-label="Next" id="nextPage">
                                                 <span aria-hidden="true">&raquo;</span>
                                                 <span class="sr-only">Next</span>
                                             </a>
@@ -354,8 +354,31 @@
         const searchKeyWords = $('#search-bar').val();
         const filterKeyWords = $('#filter').val();
         const tag_a = $(this);
+        var page;
         //console.log(tag_a[0].id);
-        const page = Number(tag_a[0].id) - 1;
+        if (tag_a[0].id=="previousPage")
+        {
+            const curPage = new URLSearchParams(window.location.search).get('page');
+            page = Number(curPage);
+            if (page==0)
+                {
+                return;
+                }
+            page = page -1;
+        }
+        else 
+        if (tag_a[0].id=="nextPage")
+        {
+            const curPage = new URLSearchParams(window.location.search).get('page');
+            page = Number(curPage);
+            if (page >= {{count.length}}-1)
+                {
+                return;
+                }
+            page = page +1;
+        }
+        else 
+            page = Number(tag_a[0].id) - 1;
         const limit = +$('#itemsPerPage').val();
         if (filterKeyWords == "All" && searchKeyWords == "") {
 
@@ -367,7 +390,7 @@
         else
             if (filterKeyWords == "All" && searchKeyWords != "") {
                 window.history.pushState("search", "Search", "/tables/?page=" + page + "&limit=" + limit);
-                $.post('../tables/search/?page=' + page + '?limit=' + limit, { searchKeyWords, filterKeyWords: "" }, function (res) {
+                $.post('../tables/search/', {page, limit, searchKeyWords, filterKeyWords: "" }, function (res) {
                     $('#wrapper').html(res);
                     $('#search-bar').val(searchKeyWords);
                     $('#filter').val(filterKeyWords);
@@ -377,7 +400,7 @@
                 if (filterKeyWords != "All" && searchKeyWords != "") {
                     window.history.pushState("search", "Search", "/tables/?page=" + page + "&limit=" + limit);
 
-                    $.post('../tables/search/?page=' + page + '?limit=' + limit, { searchKeyWords, filterKeyWords }, function (res) {
+                    $.post('../tables/search/', {page, limit, searchKeyWords, filterKeyWords }, function (res) {
                         $('#wrapper').html(res);
                         $('#search-bar').val(searchKeyWords);
                         $('#filter').val(filterKeyWords);
@@ -385,7 +408,7 @@
                 }
                 else {
                     window.history.pushState("search", "Search", "/tables/?page=" + page + "&limit=" + limit);
-                    $.post('../tables/search/?page=' + page + '?limit=' + limit, { searchKeyWords: "", filterKeyWords }, function (res) {
+                    $.post('../tables/search/', {page, limit, searchKeyWords: "", filterKeyWords }, function (res) {
                         $('#wrapper').html(res);
                         $('#search-bar').val(searchKeyWords);
                         $('#filter').val(filterKeyWords);
