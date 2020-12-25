@@ -146,7 +146,7 @@ exports.search = async function(req, res, next) {
     try {
         const pageOptions = {
             page: 0,
-            limit: parseInt(req.body.itemsPerPage, 0) || 0
+            limit: parseInt(req.body.limit, 0) || 0
         }
         const categories = await tableModel.list.getCategories();
         const list_product = await tableModel.list.search(req.body, pageOptions);
@@ -168,7 +168,7 @@ exports.filter = async function(req, res, next) {
     try {
         const pageOptions = {
             page: 0,
-            limit: parseInt(req.body.itemsPerPage, 0) || 0
+            limit: parseInt(req.body.limit, 0) || 0
         }
         const list_product = await tableModel.list.filter(req.body);
         for (item of list_product) {

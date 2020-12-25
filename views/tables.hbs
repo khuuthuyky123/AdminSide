@@ -408,51 +408,51 @@
     }
     $('#search-bar').on('input', delay(350, function () {
         const searchKeyWords = $('#search-bar').val();
-        const itemsPerPage = +$('#itemsPerPage').val();
+        const limit = +$('#itemsPerPage').val();
         const filterKeyWords = $('#filter').val();
         $('#search-bar')[0].disabled = true
         if (filterKeyWords != "All") {
-            $.post('../tables/search', { itemsPerPage, searchKeyWords, filterKeyWords }, function (res) {
+            $.post('../tables/search', { limit, searchKeyWords, filterKeyWords }, function (res) {
                 $('#wrapper').html(res)
                 $('#search-bar').val(searchKeyWords);
                 $('#filter').val(filterKeyWords);
-                $('#itemsPerPage').val(itemsPerPage);
+                $('#itemsPerPage').val(limit);
                 $('#search-bar').focus();
             });
         }
         else {
-            $.post('../tables/search', { itemsPerPage, searchKeyWords, filterKeyWords: "" }, function (res) {
+            $.post('../tables/search', { limit, searchKeyWords, filterKeyWords: "" }, function (res) {
                 $('#wrapper').html(res);
                 $('#search-bar').val(searchKeyWords);
                 $('#filter').val(filterKeyWords);
-                $('#itemsPerPage').val(itemsPerPage);
+                $('#itemsPerPage').val(limit);
                 $('#search-bar').focus();
             });
         }
-        window.history.pushState("search", "Search", "/tables/?page=0&limit=" + itemsPerPage);
+        window.history.pushState("search", "Search", "/tables/?page=0&limit=" + limit);
         
     }));
 </script>
 <script>
     $('#filter').on('change', function () {
-        const keyWords = $('#filter').val();
-        const itemsPerPage = +$('#itemsPerPage').val();
-        if (keyWords != "All") {
-            $.post('../tables/filter', { itemsPerPage, keyWords }, function (res) {
+        const filterKeyWords = $('#filter').val();
+        const limit = +$('#itemsPerPage').val();
+        if (filterKeyWords != "All") {
+            $.post('../tables/filter', { limit, filterKeyWords }, function (res) {
                 $('#wrapper').html(res);
                 //console.log(res);
-                $('#filter').val(keyWords);
-                $('#itemsPerPage').val(itemsPerPage);
-                window.history.pushState("filter", "Filter", "/tables/?page=0&limit=" + itemsPerPage);
+                $('#filter').val(filterKeyWords);
+                $('#itemsPerPage').val(limit);
+                window.history.pushState("filter", "Filter", "/tables/?page=0&limit=" + limit);
             });
         }
         else {
-            $.post('../tables/filter', { itemsPerPage, keyWords:"" }, function (res) {
+            $.post('../tables/filter', { limit, filterKeyWords:"" }, function (res) {
                 $('#wrapper').html(res);
                 //console.log(res);
-                $('#filter').val(keyWords);
-                $('#itemsPerPage').val(itemsPerPage);
-                window.history.pushState("filter", "Filter", "/tables/?page=0&limit=" + itemsPerPage);
+                $('#filter').val(filterKeyWords);
+                $('#itemsPerPage').val(limit);
+                window.history.pushState("filter", "Filter", "/tables/?page=0&limit=" + limit);
             });
         }
     });
@@ -461,13 +461,25 @@
 <script>
     $('#itemsPerPage').on('change', function () {
         const limit = +$('#itemsPerPage').val();
-
+        const filterKeyWords = $('#filter').val();
+        if (filterKeyWords!="All")
+        {
+            $.post('../tables/filter', { limit, filterKeyWords }, function (res) {
+                $('#wrapper').html(res);
+                //console.log(res);
+                $('#filter').val(filterKeyWords);
+                $('#itemsPerPage').val(limit);
+                window.history.pushState("filter", "Filter", "/tables/?page=0&limit=" + limit);
+            });
+        }
+        else{
         //window.location.replace('?page=0&limit=' + limit);
         $.get('../tables/?page=0&limit=' + limit, function (res) {
             $('#wrapper').html(res);
             $('#itemsPerPage').val(limit);
             window.history.pushState("table", "Table", "/tables/?page=0&limit=" + limit);
         });
+        }
     });
 
 </script>

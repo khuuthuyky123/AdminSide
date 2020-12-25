@@ -17,7 +17,6 @@ module.exports.list = {
     edit(entity) {
         const sql = "UPDATE Product SET ? WHERE ? ";
         const condition = { id: entity.id };
-        //var categoryId = db.load("SELECT id FROM Category WHERE Name LIKE '" + entity.category + "'");
         return db.edit(sql, entity, condition);
     },
 
@@ -57,7 +56,7 @@ LIMIT " + page * limit + "," + limit;
         return db.load(sql);
     },
     filter(entity) {
-        const sql = "SELECT p.* FROM Category as c JOIN Product as p ON c.id=p.categoryId WHERE c.name LIKE '%" + entity.keyWords + "%' ORDER BY id ASC";
+        const sql = "SELECT p.* FROM Category as c JOIN Product as p ON c.id=p.categoryId WHERE c.name LIKE '%" + entity.filterKeyWords + "%' ORDER BY id ASC";
         return db.load(sql);
     }
 };
