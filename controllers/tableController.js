@@ -61,16 +61,16 @@ exports.edit = function(req, res, next) {
 
             req.body = fields;
             if (files.newImagePath.size != 0) {
-                var tokens = String(files.newImagePath.path).split("\\");
-                var newPath = String(files.newImagePath.path).replace(tokens[tokens.length - 1], files.newImagePath.name);
-                fs.renameSync(files.newImagePath.path, newPath);
+                //var tokens = String(files.newImagePath.path).split("\\");
+                //var newPath = String(files.newImagePath.path).replace(tokens[tokens.length - 1], files.newImagePath.name);
+                //fs.renameSync(files.newImagePath.path, newPath);
                 const curProduct = await tableModel.list.getSingleProduct(req.body.id);
                 const oldImage = curProduct[0].imagePath;
                 const oldImagePath = oldImage.split(".");
                 await cloudinary.uploader.destroy(oldImagePath[0], function(error, result) {
                     console.log(result, error)
                 });
-                await cloudinary.uploader.upload(newPath, async function(error, result) {
+                await cloudinary.uploader.upload(files.newImagePath.path, async function(error, result) {
                     //console.log(result)
                     if (err) {
                         throw err;
@@ -124,10 +124,10 @@ exports.add = async function(req, res, next) {
             //console.log({ fields, files });
             req.body = fields;
             if (files.imagePath.size != 0) {
-                var tokens = String(files.imagePath.path).split("\\");
-                var newPath = String(files.imagePath.path).replace(tokens[tokens.length - 1], files.imagePath.name);
-                fs.renameSync(files.imagePath.path, newPath);
-                cloudinary.uploader.upload(newPath, async function(error, result) {
+                //var tokens = String(files.imagePath.path).split("\\");
+                //var newPath = String(files.imagePath.path).replace(tokens[tokens.length - 1], files.imagePath.name);
+                //fs.renameSync(files.imagePath.path, newPath);
+                cloudinary.uploader.upload(files.imagePath.path, async function(error, result) {
                     //console.log(result)
                     req.body.imagePath = result.public_id + "." + result.format;
                     const ret = await tableModel.list.add(req.body);
