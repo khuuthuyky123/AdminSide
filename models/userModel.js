@@ -18,7 +18,7 @@ module.exports.list = {
         WHERE (name LIKE '%" + entity.searchKeyWords + "%' \
         OR usn LIKE '%" + entity.searchKeyWords + "%' \
         OR email LIKE '%" + entity.searchKeyWords + "%') \
-        AND (isAdmin=" + (entity.filterKeyWords == "Admin") + " OR " + (entity.filterKeyWords == "") + " ) ORDER BY id asc \
+        AND (isAdmin=" + (entity.filterKeyWords == "Admin") + " OR " + (entity.filterKeyWords == "All") + " ) ORDER BY id asc \
         LIMIT " + page * limit + "," + limit;
         return db.load(sql);
     },
@@ -31,7 +31,7 @@ module.exports.list = {
         return db.load(sql);
     },
     filter(entity) {
-        const sql = "SELECT * FROM User WHERE isAdmin=" + (entity.filterKeyWords == "Admin") + " ORDER BY id ASC";
+        const sql = "SELECT * FROM User WHERE (isAdmin=" + (entity.filterKeyWords == "Admin") + " OR " + (entity.filterKeyWords == "All") + " ) ORDER BY id ASC";
         return db.load(sql);
     },
     unblock(body) {

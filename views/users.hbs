@@ -227,32 +227,19 @@
             page = Number(tag_a[0].id) - 1;
         const limit = +$('#itemsPerPage').val();
         if (filterKeyWords == "All" && searchKeyWords == "") {
-
-            //const offset = itemsPerPage * (pagniation - 1)
             window.location.replace('?page=' + page + '&limit=' + limit);
-            //$('#' + tag_a.id).css('background', 'beige');
-
         }
         else
             if (filterKeyWords == "All" && searchKeyWords != "") {
                 window.history.pushState("search", "Search", "/users/?page=" + page + "&limit=" + limit);
-                $.post('../users/search/', {page, limit, searchKeyWords, filterKeyWords: "" }, function (res) {
+                $.post('../users/search/', {page, limit, searchKeyWords, filterKeyWords}, function (res) {
                     $('#wrapper').html(res);
                     $('#search-bar').val(searchKeyWords);
                     $('#filter').val(filterKeyWords);
                 });
             }
-            else {
-                if (filterKeyWords != "All" && searchKeyWords != "") {
-                    window.history.pushState("search", "Search", "/users/?page=" + page + "&limit=" + limit);
-
-                    $.post('../users/search/', {page, limit, searchKeyWords, filterKeyWords }, function (res) {
-                        $('#wrapper').html(res);
-                        $('#search-bar').val(searchKeyWords);
-                        $('#filter').val(filterKeyWords);
-                    });
-                }
-                else {
+            else
+            {
                     window.history.pushState("search", "Search", "/users/?page=" + page + "&limit=" + limit);
                     $.post('../users/search/', {page, limit, searchKeyWords: "", filterKeyWords }, function (res) {
                         $('#wrapper').html(res);
@@ -261,7 +248,6 @@
                         $('#search-bar').focus();
                     });
                 }
-            }
     });
 </script>
 <script>
@@ -280,7 +266,6 @@
         const limit = +$('#itemsPerPage').val();
         const filterKeyWords = $('#filter').val();
         $('#search-bar')[0].disabled = true
-        if (filterKeyWords != "All") {
             $.post('../users/search', { limit, searchKeyWords, filterKeyWords }, function (res) {
                 $('#wrapper').html(res)
                 $('#search-bar').val(searchKeyWords);
@@ -288,16 +273,6 @@
                 $('#itemsPerPage').val(limit);
                 $('#search-bar').focus();
             });
-        }
-        else {
-            $.post('../users/search', { limit, searchKeyWords, filterKeyWords: "" }, function (res) {
-                $('#wrapper').html(res);
-                $('#search-bar').val(searchKeyWords);
-                $('#filter').val(filterKeyWords);
-                $('#itemsPerPage').val(limit);
-                $('#search-bar').focus();
-            });
-        }
         window.history.pushState("search", "Search", "/users/?page=0&limit=" + limit);
         
     }));
@@ -306,7 +281,6 @@
     $('#filter').on('change', function () {
         const filterKeyWords = $('#filter').val();
         const limit = +$('#itemsPerPage').val();
-        if (filterKeyWords != "All") {
             $.post('../users/filter', { limit, filterKeyWords }, function (res) {
                 $('#wrapper').html(res);
                 //console.log(res);
@@ -314,16 +288,6 @@
                 $('#itemsPerPage').val(limit);
                 window.history.pushState("filter", "Filter", "/users/?page=0&limit=" + limit);
             });
-        }
-        else {
-            $.post('../users/filter', { limit, filterKeyWords:"" }, function (res) {
-                $('#wrapper').html(res);
-                //console.log(res);
-                $('#filter').val(filterKeyWords);
-                $('#itemsPerPage').val(limit);
-                window.history.pushState("filter", "Filter", "/users/?page=0&limit=" + limit);
-            });
-        }
     });
 
 </script>
@@ -342,7 +306,6 @@
             });
         }
         else{
-        //window.location.replace('?page=0&limit=' + limit);
         $.get('../users/?page=0&limit=' + limit, function (res) {
             $('#wrapper').html(res);
             $('#itemsPerPage').val(limit);
