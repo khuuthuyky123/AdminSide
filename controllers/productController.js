@@ -1,4 +1,4 @@
-const tableModel = require("../models/tableModel");
+const productModel = require("../models/productModel");
 var formidable = require("formidable"); // used for parsing form data
 var fs = require("fs");
 var cloudinary = require('cloudinary').v2;
@@ -15,7 +15,7 @@ exports.index = async function(req, res, next) {
             limit: parseInt(req.query.limit, 10) || 10,
         }
         if (req.query.constructor === Object && Object.keys(req.query).length === 0) {
-            res.redirect("/tables/?page=0&limit=10")
+            res.redirect("/products/?page=0&limit=10")
         }
         //var pagination = { offset: 0, itemsPerPage: 0 };
         //console.log(req.body)
@@ -25,22 +25,22 @@ exports.index = async function(req, res, next) {
         // } else {
         //     pagination = req.body;
         // }
-        const categories = await tableModel.list.getCategories();
-        //const list_product = await tableModel.list.all();
+        const categories = await productModel.list.getCategories();
+        //const list_product = await productModel.list.all();
 
         //pass data to view display
-        const list_product = await tableModel.list.get(pageOptions);
+        const list_product = await productModel.list.get(pageOptions);
         for (item of list_product) {
             //item.imagePath = cloudinary.url(item.imagePath);
             item.imagePath = cloudinary.url(item.imagePath, { width: 200, crop: "scale" })
         }
-        const n = await tableModel.list.getAmount();
+        const n = await productModel.list.getAmount();
         var count = [];
         for (var i = 1; i <= Math.ceil(n[0].amount / pageOptions.limit); i++) {
             count.push({ ord: i, isfirst: (i == pageOptions.page + 1) });
         }
         //console.log(count);
-        res.render("tables", { list_product, count, categories });
+        res.render("products", { list_product, count, categories });
     } catch (err) {
         console.log(err);
         res.send("Check error on server 's console ");
@@ -64,7 +64,7 @@ exports.edit = function(req, res, next) {
                 //var tokens = String(files.newImagePath.path).split("\\");
                 //var newPath = String(files.newImagePath.path).replace(tokens[tokens.length - 1], files.newImagePath.name);
                 //fs.renameSync(files.newImagePath.path, newPath);
-                const curProduct = await tableModel.list.getSingleProduct(req.body.id);
+                const curProduct = await productModel.list.getSingleProduct(req.body.id);
                 const oldImage = curProduct[0].imagePath;
                 const oldImagePath = oldImage.split(".");
                 await cloudinary.uploader.destroy(oldImagePath[0], function(error, result) {
@@ -76,14 +76,14 @@ exports.edit = function(req, res, next) {
                         throw err;
                     }
                     req.body.imagePath = result.public_id + "." + result.format;
-                    const ret = await tableModel.list.edit(req.body);
+                    const ret = await productModel.list.edit(req.body);
                     //console.log(ret);
-                    res.redirect("/tables");
+                    res.redirect("/products");
                 });
             } else {
-                const ret = await tableModel.list.edit(req.body);
+                const ret = await productModel.list.edit(req.body);
                 //console.log(ret);
-                res.redirect("/tables");
+                res.redirect("/products");
             }
             //const newPath = __dirname + "/../public/images/" + files.newImagePath.name;
             //fs.renameSync(files.newImagePath.path, newPath);
@@ -98,15 +98,15 @@ exports.edit = function(req, res, next) {
 exports.delete = async function(req, res, next) {
     try {
         //console.log(product_name);
-        const curProduct = await tableModel.list.getSingleProduct(req.body.id);
+        const curProduct = await productModel.list.getSingleProduct(req.body.id);
         const oldImage = curProduct[0].imagePath;
         const oldImagePath = oldImage.split(".");
         await cloudinary.uploader.destroy(oldImagePath[0], function(error, result) {
             console.log(result, error)
         });
-        const ret = await tableModel.list.delete(req.body);
+        const ret = await productModel.list.delete(req.body);
         console.log(ret);
-        res.send("/tables");
+        res.send("/products");
     } catch (err) {
         console.log(err);
         res.send("Check error on server 's console ");
@@ -130,9 +130,9 @@ exports.add = async function(req, res, next) {
                 cloudinary.uploader.upload(files.imagePath.path, async function(error, result) {
                     //console.log(result)
                     req.body.imagePath = result.public_id + "." + result.format;
-                    const ret = await tableModel.list.add(req.body);
+                    const ret = await productModel.list.add(req.body);
                     console.log(ret);
-                    res.redirect("/tables");
+                    res.redirect("/products");
                 });
             }
         } catch (err) {
@@ -148,9 +148,9 @@ exports.search = async function(req, res, next) {
             page: parseInt(req.body.page, 0) || 0,
             limit: parseInt(req.body.limit, 0) || 10
         }
-        const categories = await tableModel.list.getCategories();
-        const list_product = await tableModel.list.search(req.body, pageOptions);
-        const n = await tableModel.list.getSearchAmount(req.body);
+        const categories = await productModel.list.getCategories();
+        const list_product = await productModel.list.search(req.body, pageOptions);
+        const n = await productModel.list.getSearchAmount(req.body);
         for (item of list_product) {
             item.imagePath = cloudinary.url(item.imagePath, { width: 200, crop: "scale" })
         }
@@ -158,7 +158,7 @@ exports.search = async function(req, res, next) {
         for (var i = 1; i <= Math.ceil(n[0].amount / pageOptions.limit); i++) {
             count.push({ ord: i, isfirst: (i == pageOptions.page + 1) });
         }
-        res.render("tables", { list_product, categories, count });
+        res.render("products", { list_product, categories, count });
     } catch (err) {
         console.log(err);
         res.send("Check error on server 's console ");
@@ -170,7 +170,7 @@ exports.filter = async function(req, res, next) {
             page: parseInt(req.body.page, 0) || 0,
             limit: parseInt(req.body.limit, 0) || 0
         }
-        const list_product = await tableModel.list.filter(req.body);
+        const list_product = await productModel.list.filter(req.body);
         for (item of list_product) {
             item.imagePath = cloudinary.url(item.imagePath, { width: 200, crop: "scale" })
         }
@@ -181,8 +181,8 @@ exports.filter = async function(req, res, next) {
         }
         //console.log(list_product);
 
-        const categories = await tableModel.list.getCategories();
-        res.render("tables", { list_product, count, categories });
+        const categories = await productModel.list.getCategories();
+        res.render("products", { list_product, count, categories });
     } catch (err) {
         console.log(err);
         res.send("Check error on server 's console ");
