@@ -6,7 +6,7 @@ module.exports.list = {
         return db.load(sql);
     },
     singleByUserName({ name }) {
-        const sql = "SELECT * FROM User WHERE usn LIKE '" + name + "' OR email LIKE '" + name + "'";
+        const sql = "SELECT * FROM User WHERE usn LIKE '" + name + "'";
         return db.load(sql);
     }
 }

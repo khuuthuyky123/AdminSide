@@ -91,7 +91,7 @@
                                                 <button type="button" class="btn btn-primary" data-toggle="modal"
                                                     data-target="#exampleModal" data-whatever="{{id}}">Edit</button>
                                             </td> -->
-                                            <th><button type="button" class="btn btn-{{#if isActive}}success" onclick="Block({{id}}){{else}}danger" onclick="Unblock({{id}}){{/if}}"> {{#if isActive}}block{{else}}unblock{{/if}}</button></th>
+                                            <th><button type="button" class="btn btn-{{#if isActive}}success" onclick="Block({{id}}){{else}}danger" onclick="Unblock({{id}}){{/if}}" {{#unless isEditable}}disabled{{/unless}}> {{#if isActive}}block{{else}}unblock{{/if}}</button></th>
                                         </tr>
                                         {{/each}}
 

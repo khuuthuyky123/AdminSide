@@ -50,5 +50,8 @@ module.exports = {
     },
     add(sql, entity) {
         return pool_query(sql, entity);
-    }
+    },
+    search(sql, entity) {
+        return pool_query(sql, entity);
+    },
 };

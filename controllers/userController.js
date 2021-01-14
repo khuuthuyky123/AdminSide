@@ -30,14 +30,21 @@ exports.index = async function(req, res, next) {
 
         //pass data to view display
         const list_user = await userModel.list.get(pageOptions);
+
         for (item of list_user) {
             //item.imagePath = cloudinary.url(item.imagePath);
             item.imagePath = cloudinary.url(item.imagePath, { width: 200, crop: "scale" })
+            if (item.usn == req.session.authUser[0].usn)
+                item.isEditable = false;
+            else
+                item.isEditable = true;
         }
         const n = await userModel.list.getAmount();
         var count = [];
+
         for (var i = 1; i <= Math.ceil(n[0].amount / pageOptions.limit); i++) {
             count.push({ ord: i, isfirst: (i == pageOptions.page + 1) });
+
         }
         //console.log(count);
         res.render("users", { list_user, count, categories });

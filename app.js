@@ -8,7 +8,7 @@ var indexRouter = require('./routes/index');
 var productRouter = require('./routes/product');
 var loginRouter = require('./routes/login');
 var userRouter = require('./routes/user');
-var profileRouter = require('./routes/profile');
+var profileRouter = require('./routes/user-profile');
 var hbs = require('express-handlebars');
 var app = express();
 
@@ -53,7 +53,7 @@ app.use(async function(req, res, next) {
     next();
 })
 
-app.use('/profile', profileRouter);
+app.use('/user-profile', profileRouter);
 app.use('/login', loginRouter);
 app.use('/users', userRouter);
 app.use('/products', productRouter);
