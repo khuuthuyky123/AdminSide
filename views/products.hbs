@@ -160,7 +160,7 @@
                 <h4 class="modal-title" id="addModalLabel">New message</h4>
             </div>
             <div class="modal-body">
-                <form method="POST" action="../product/add/?page=0&limit=10" enctype="multipart/form-data">
+                <form method="POST" action="/products/add/?page=0&limit=10" enctype="multipart/form-data">
 
                     <div class="form-group">
                         <label for="name" class="control-label">Name:</label>
@@ -214,7 +214,7 @@
                 <h4 class="modal-title" id="exampleModalLabel">New message</h4>
             </div>
             <div class="modal-body">
-                <form method="POST" action="../product/edit/" enctype="multipart/form-data">
+                <form method="POST" action="../products/edit/" enctype="multipart/form-data">
                     <div class="form-group" hidden>
                         <label for="id" class="control-label"></label>
                         <input type="text" class="form-control" name="id" id="id">
@@ -255,7 +255,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-danger" data-href="/product/delete" data-toggle="modal"
+                        <button type="button" class="btn btn-danger" data-href="/products/delete" data-toggle="modal"
                             data-target="#confirm-delete">Delete</button>
                         <button type="submit" class="btn btn-primary">Save</button>
                     </div>
@@ -343,7 +343,7 @@
         const id = $('#exampleModal').find('#id').val();
         //$(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href')+'/'+id);
         $(this).find('.btn-ok').click(function () {
-            $.post('../product/delete/', { id }, function (result) {
+            $.post('../products/delete/', { id }, function (result) {
                 $(location).attr('href', result);
             })
         })
@@ -389,8 +389,8 @@
         }
         else
             if (filterKeyWords == "All" && searchKeyWords != "") {
-                window.history.pushState("search", "Search", "/product/?page=" + page + "&limit=" + limit);
-                $.post('../product/search/', {page, limit, searchKeyWords, filterKeyWords: "" }, function (res) {
+                window.history.pushState("search", "Search", "/products/?page=" + page + "&limit=" + limit);
+                $.post('../products/search/', {page, limit, searchKeyWords, filterKeyWords: "" }, function (res) {
                     $('#wrapper').html(res);
                     $('#search-bar').val(searchKeyWords);
                     $('#filter').val(filterKeyWords);
@@ -398,17 +398,17 @@
             }
             else {
                 if (filterKeyWords != "All" && searchKeyWords != "") {
-                    window.history.pushState("search", "Search", "/product/?page=" + page + "&limit=" + limit);
+                    window.history.pushState("search", "Search", "/products/?page=" + page + "&limit=" + limit);
 
-                    $.post('../product/search/', {page, limit, searchKeyWords, filterKeyWords }, function (res) {
+                    $.post('../products/search/', {page, limit, searchKeyWords, filterKeyWords }, function (res) {
                         $('#wrapper').html(res);
                         $('#search-bar').val(searchKeyWords);
                         $('#filter').val(filterKeyWords);
                     });
                 }
                 else {
-                    window.history.pushState("search", "Search", "/product/?page=" + page + "&limit=" + limit);
-                    $.post('../product/search/', {page, limit, searchKeyWords: "", filterKeyWords }, function (res) {
+                    window.history.pushState("search", "Search", "/products/?page=" + page + "&limit=" + limit);
+                    $.post('../products/search/', {page, limit, searchKeyWords: "", filterKeyWords }, function (res) {
                         $('#wrapper').html(res);
                         $('#search-bar').val(searchKeyWords);
                         $('#filter').val(filterKeyWords);
@@ -435,7 +435,7 @@
         const filterKeyWords = $('#filter').val();
         $('#search-bar')[0].disabled = true
         if (filterKeyWords != "All") {
-            $.post('../product/search', { limit, searchKeyWords, filterKeyWords }, function (res) {
+            $.post('../products/search', { limit, searchKeyWords, filterKeyWords }, function (res) {
                 $('#wrapper').html(res)
                 $('#search-bar').val(searchKeyWords);
                 $('#filter').val(filterKeyWords);
@@ -444,7 +444,7 @@
             });
         }
         else {
-            $.post('../product/search', { limit, searchKeyWords, filterKeyWords: "" }, function (res) {
+            $.post('../products/search', { limit, searchKeyWords, filterKeyWords: "" }, function (res) {
                 $('#wrapper').html(res);
                 $('#search-bar').val(searchKeyWords);
                 $('#filter').val(filterKeyWords);
@@ -452,7 +452,7 @@
                 $('#search-bar').focus();
             });
         }
-        window.history.pushState("search", "Search", "/product/?page=0&limit=" + limit);
+        window.history.pushState("search", "Search", "/products/?page=0&limit=" + limit);
         
     }));
 </script>
@@ -461,21 +461,21 @@
         const filterKeyWords = $('#filter').val();
         const limit = +$('#itemsPerPage').val();
         if (filterKeyWords != "All") {
-            $.post('../product/filter', { limit, filterKeyWords }, function (res) {
+            $.post('../products/filter', { limit, filterKeyWords }, function (res) {
                 $('#wrapper').html(res);
                 //console.log(res);
                 $('#filter').val(filterKeyWords);
                 $('#itemsPerPage').val(limit);
-                window.history.pushState("filter", "Filter", "/product/?page=0&limit=" + limit);
+                window.history.pushState("filter", "Filter", "/products/?page=0&limit=" + limit);
             });
         }
         else {
-            $.post('../product/filter', { limit, filterKeyWords:"" }, function (res) {
+            $.post('../products/filter', { limit, filterKeyWords:"" }, function (res) {
                 $('#wrapper').html(res);
                 //console.log(res);
                 $('#filter').val(filterKeyWords);
                 $('#itemsPerPage').val(limit);
-                window.history.pushState("filter", "Filter", "/product/?page=0&limit=" + limit);
+                window.history.pushState("filter", "Filter", "/products/?page=0&limit=" + limit);
             });
         }
     });
@@ -487,20 +487,20 @@
         const filterKeyWords = $('#filter').val();
         if (filterKeyWords!="All")
         {
-            $.post('../product/filter', { limit, filterKeyWords }, function (res) {
+            $.post('../products/filter', { limit, filterKeyWords }, function (res) {
                 $('#wrapper').html(res);
                 //console.log(res);
                 $('#filter').val(filterKeyWords);
                 $('#itemsPerPage').val(limit);
-                window.history.pushState("filter", "Filter", "/product/?page=0&limit=" + limit);
+                window.history.pushState("filter", "Filter", "/products/?page=0&limit=" + limit);
             });
         }
         else{
         //window.location.replace('?page=0&limit=' + limit);
-        $.get('../product/?page=0&limit=' + limit, function (res) {
+        $.get('../products/?page=0&limit=' + limit, function (res) {
             $('#wrapper').html(res);
             $('#itemsPerPage').val(limit);
-            window.history.pushState("table", "Table", "/product/?page=0&limit=" + limit);
+            window.history.pushState("table", "Table", "/products/?page=0&limit=" + limit);
         });
         }
     });

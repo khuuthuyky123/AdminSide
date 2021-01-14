@@ -131,7 +131,7 @@ exports.add = async function(req, res, next) {
                     //console.log(result)
                     req.body.imagePath = result.public_id + "." + result.format;
                     const ret = await productModel.list.add(req.body);
-                    console.log(ret);
+                    //console.log(ret);
                     res.redirect("/products");
                 });
             }
