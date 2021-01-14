@@ -5,10 +5,10 @@ exports.index = async function(req, res, next) {
         const ref = req.headers.referer;
         req.session.retUrl = ref;
         //console.log(ref);
-        res.render("login", { layout: false })
+        return res.render("login", { layout: false })
     } catch (err) {
         console.log(err);
-        res.send("Check error on server 's console ");
+        return res.send("Check error on server 's console ");
     }
 };
 
