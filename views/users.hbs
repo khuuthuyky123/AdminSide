@@ -60,12 +60,12 @@
                                     <thead>
                                         <tr>
                                             <th class="col-sm-1">ID</th>
-                                            <th class="col-sm-2">Name</th>
+                                            <th class="col-sm-3">Name</th>
                                             <th class="col-sm-2">Username</th>
                                             <th hidden>Password</th>
                                             <th class="col-sm-2">Email</th>
                                             <th class="col-sm-2">Phone</th>
-                                            <th class="col-sm-1">Avatar</th>
+                                            
                                             <th class="col-sm-1">Active</th>
                                             <th class="col-sm-1"></th>
                                             
@@ -80,8 +80,7 @@
                                             <td class="user_pwd" hidden>{{pwd}}</td>
                                             <td class="user_email">{{email}}</td>
                                             <td class="center user_phone">{{phone}}</td>
-                                            <th class="user_image"><img style="width:100px; height:100px"
-                                                    src="{{avtPath}}"></th>
+                                            
                                             <td class="user_category" hidden>{{userCat}}</td>
                                             <th class="user_active {{#if isActive}}success{{else}}danger{{/if}}"></th>
                                             {{!-- <td>quantity</td> --}}
@@ -104,7 +103,6 @@
                                             <th hidden >Password</th>
                                             <th >Email</th>
                                             <th >Phone</th>
-                                            <th >Avatar</th>
                                             <th >Active</th>
                                             <th ></th>
                                             

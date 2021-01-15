@@ -28,7 +28,7 @@ module.exports.list = {
         return db.load(sql);
     },
     getTopProduct() {
-        const sql = "SELECT p.name as label, SUM(i.amount) as value FROM ItemInCart as i JOIN PRODUCT as p ON i.itemId = p.id GROUP BY i.itemid ORDER BY SUM(i.amount) DESC LIMIT 0,10"
+        const sql = "SELECT p.name as label, SUM(i.amount) as value FROM ItemInCart as i JOIN Product as p ON i.itemId = p.id GROUP BY i.itemid ORDER BY SUM(i.amount) DESC LIMIT 0,10"
         return db.load(sql);
     }
 }
