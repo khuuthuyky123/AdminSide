@@ -15,7 +15,7 @@ exports.index = async function(req, res, next) {
 exports.login = async function(req, res, next) {
     try {
         const user = await loginModel.list.singleByUserName({ name: req.body.username })
-        if (user == null)
+        if (user == null || user.length == 0)
             return res.render("login", {
                 layout: false,
                 err_message: "Invalid username or password"
