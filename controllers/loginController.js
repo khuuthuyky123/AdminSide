@@ -23,6 +23,9 @@ exports.login = async function(req, res, next) {
         const ret = bcrypt.compareSync(req.body.password, user[0].pwd);
         if (ret == false)
             return res.render("login", { layout: false, err_message: "Invalid username or password" });
+        if (user[0].isAdmin == false)
+            return res.render("login", { layout: false, err_message: "Please login with admin account" });
+
         req.session.isAuth = true;
         req.session.authUser = user;
 
