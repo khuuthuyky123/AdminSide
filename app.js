@@ -10,6 +10,7 @@ var loginRouter = require('./routes/login');
 var userRouter = require('./routes/user');
 var profileRouter = require('./routes/user-profile');
 var hbs = require('express-handlebars');
+var express_handlebars_sections = require('express-handlebars-sections');
 var app = express();
 
 // view engine setup
@@ -26,13 +27,19 @@ app.use(session({
     }
 }))
 app.engine('hbs', hbs({
+
     extname: 'hbs',
     defaultLayout: 'layout',
     layoutsDir: path.join(__dirname, 'views'),
+
     partialsDir: [
         //  path to your partials
         path.join(__dirname, 'views/partials'),
-    ]
+    ],
+    helpers: {
+        section: express_handlebars_sections(),
+    }
+
 }));
 app.use(logger('dev'));
 app.use(express.json());

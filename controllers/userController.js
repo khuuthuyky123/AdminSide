@@ -76,16 +76,16 @@ exports.unblock = async function(req, res, next) {
         const ret = await userModel.list.unblock(req.body);
         const categories = [{ name: "Admin" }, { name: "User" }];
 
+
+        //pass data to view display
+        const list_user = await userModel.list.search(req.body, pageOptions);
+        const n = await userModel.list.getSearchAmount(req.body);
         for (item of list_user) {
             if (item.usn == req.session.authUser[0].usn)
                 item.isEditable = false;
             else
                 item.isEditable = true;
         }
-        //pass data to view display
-        const list_user = await userModel.list.search(req.body, pageOptions);
-        const n = await userModel.list.getSearchAmount(req.body);
-
         var count = [];
         for (var i = 1; i <= Math.ceil(n[0].amount / pageOptions.limit); i++) {
             count.push({ ord: i, isfirst: (i == pageOptions.page + 1) });
